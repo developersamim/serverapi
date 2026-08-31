@@ -8,7 +8,7 @@ on:
 env:
   AZURE_CONTAINER_REGISTRY: distantconnect
   CONTAINER_APP_NAME: serverapicontainer
-  RESOURCE_GROUP: tg-test
+  RESOURCE_GROUP: rg-test
 
 jobs:
   build-and-deploy:
