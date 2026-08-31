@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 env:
-  AZURE_CONTAINER_REGISTRY: distantconnect
+  AZURE_CONTAINER_REGISTRY: customercorecr
   CONTAINER_APP_NAME: serverapicontainer
   RESOURCE_GROUP: rg-test
 
