@@ -65,6 +65,26 @@ jobs:
               --location "${{ env.LOCATION }}"
           fi
 
+      - name: Ensure Container App exists
+        shell: bash
+        run: |
+          if az containerapp show \
+            --name "${{ env.CONTAINER_APP_NAME }}" \
+            --resource-group "${{ env.RESOURCE_GROUP }}" >/dev/null 2>&1; then
+            echo "Container app already exists"
+          else
+            az containerapp create \
+              --name "${{ env.CONTAINER_APP_NAME }}" \
+              --resource-group "${{ env.RESOURCE_GROUP }}" \
+              --environment "${{ env.CONTAINER_APP_ENVIRONMENT }}" \
+              --image "${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}" \
+              --target-port 8000 \
+              --ingress external \
+              --registry-server "${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io" \
+              --registry-username "${{ secrets.AZURE_REGISTRY_USERNAME }}" \
+              --registry-password "${{ secrets.AZURE_REGISTRY_PASSWORD }}"
+          fi
+
       - name: Configure ACR credentials for Container App
         shell: bash
         run: |
