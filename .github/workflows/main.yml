@@ -31,16 +31,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build local Docker image for Snyk scan
-        run: |
-          docker build -t serverapi:snyk .
-
       - name: Run Snyk scan
         uses: snyk/actions/dotnet@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          image: serverapi:snyk
           args: --serverity-threshold=high --file=Dockerfile
 
       - name: Log in to ACR
