@@ -85,10 +85,21 @@ jobs:
               --registry-password "${{ secrets.AZURE_REGISTRY_PASSWORD }}"
           fi
 
-      - name: Update app image
+      - name: Configure ACR credentials for Container App
         shell: bash
         run: |
-          az containerapp update \
-            --name "${{ env.CONTAINER_APP_NAME }}"
-            --resource-group "${{ env.RESOURCE_GROUP }}"
-            --image "${{ env.AZURE_CONTAINER_REGISTRY}}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          az containerapp registry set \
+            --name "${{ env.CONTAINER_APP_NAME }}" \
+            --resource-group "${{ env.RESOURCE_GROUP }}" \
+            --server "${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io" \
+            --username "${{ secrets.AZURE_REGISTRY_USERNAME }}" \
+            --password "${{ secrets.AZURE_REGISTRY_PASSWORD }}"
+
+      - name: Deploy to Azure Container Apps
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          resourceGroup: ${{ env.RESOURCE_GROUP }}
+          containerAppName: ${{ env.CONTAINER_APP_NAME }}
+          environmentVariables: |
+            ASPNETCORE_ENVIRONMENT=Development
